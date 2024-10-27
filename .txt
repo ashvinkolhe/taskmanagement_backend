@@ -1,0 +1,20 @@
+Done: ✅
+
+Register : http://localhost:8080/api/users/register
+login : http://localhost:8080/api/users/login
+update password : http://localhost:8080/api/users/update-password
+logout : http://localhost:8080/api/users/logout
+Create Task : http://localhost:8080/api/tasks/create
+get task : http://localhost:8080/api/tasks/:id
+get all tasks : http://localhost:8080/api/tasks
+update task : http://localhost:8080/api/tasks/:id
+delete task : http://localhost:8080/api/tasks/:id
+update checklist item : http://localhost:8080/api/tasks/:taskId/checklist/:checklistId
+update task state : http://localhost:8080/api/tasks/:id/state
+assign task to user : http://localhost:8080/api/tasks/:id/assign
+get filtered tasks : 
+    for today : http://localhost:8080/api/tasks/filtered?filter=today
+    for this week : http://localhost:8080/api/tasks/filtered?filter=thisWeek
+    for this month : http://localhost:8080/api/tasks/filtered?filter=thisMonth
+
+Pending:
