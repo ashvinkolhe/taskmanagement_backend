@@ -2,15 +2,6 @@
 
 This is a Task Management Backend using Express.js, MongoDB, and JWT for user authentication. The application allows users to register, log in, create tasks, and retrieve tasks. It includes input validation using **express-validator** and JWT authentication to secure routes.
 
-## Features
-
-- User registration and login with JWT-based authentication.
-- Ability to create tasks with title, priority, due date, and checklist items.
-- Retrieve all tasks for a specific user.
-- Input validation using **express-validator**.
-- Authentication middleware to protect routes.
-- MongoDB as the database.
-
 ## Technologies Used
 
 - **Node.js**: Server-side JavaScript runtime.
@@ -40,7 +31,7 @@ This is a Task Management Backend using Express.js, MongoDB, and JWT for user au
 
 3. Create a `.env` file in the root of your project and add:
    ```bash
-   JWT_SECRET=ashwin
+   JWT_SECRET= your JWT_SECRET
    MONGODB_URI=your-mongodb-uri
    ```
 
@@ -53,6 +44,3 @@ This is a Task Management Backend using Express.js, MongoDB, and JWT for user au
 
 This project is licensed under the MIT License.
 
----
-
-This `README.md` file covers all the key aspects of the project, including installation steps, API usage, validation, and testing instructions. You can now push the entire project (except for `.env`) to GitHub!
