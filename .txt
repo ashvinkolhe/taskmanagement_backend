@@ -17,4 +17,8 @@ get filtered tasks :
     for this week : http://localhost:8080/api/tasks/filtered?filter=thisWeek
     for this month : http://localhost:8080/api/tasks/filtered?filter=thisMonth
 
-Pending:
+
+
+
+
+

@@ -12,7 +12,7 @@ const app = express();
 
 // CORS Configuration
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow your frontend origin
+  origin: ['http://localhost:5173', 'https://taskmanagement-frontend-vyf6.vercel.app'], // Allow both local and production origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization'], 
   credentials: true,

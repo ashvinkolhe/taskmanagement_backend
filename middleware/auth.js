@@ -10,7 +10,7 @@ exports.authenticate = async (req, res, next) => {
     }
 
     try {
-        // Verify token
+        // Verify tokenAC
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         // Find user by ID and attach to request
