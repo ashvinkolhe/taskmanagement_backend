@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    Password: {  // Ensure this matches the login logic
+    password: {  // Ensure this matches the login logic
         type: String,
         required: true
     },

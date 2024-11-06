@@ -1,9 +1,9 @@
 const { body, validationResult } = require('express-validator');
 
 exports.validateRegister = [
-    body('Name').notEmpty().withMessage('Name is required'),
+    body('name').notEmpty().withMessage('Name is required'), // Change Name to name (lowercase)
     body('email').isEmail().withMessage('Invalid email address'),
-    body('password') // Changed Password to password
+    body('password') // Ensure password field is correctly validated
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
         .custom((value, { req }) => {
             if (value !== req.body.confirmPassword) {
@@ -21,6 +21,7 @@ exports.validateRegister = [
         next();
     },
 ];
+
 
 exports.validateLogin = [
     body('email').isEmail().withMessage('Invalid email address'),
