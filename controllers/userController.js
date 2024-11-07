@@ -55,8 +55,9 @@ exports.login = async (req, res) => {
 
         console.log('Password from request:', password); // Log the password from the request
         console.log('Password from database:', user.password); // Use the correct property name here
-
-        const isMatch = await bcrypt.compare(password, user.password); // Use the correct property name
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const isMatch = await bcrypt.compare(hashedPassword, user.password); // Use the correct property name
         if (!isMatch) {
             return res.status(401).json({ status: 'error', message: 'Invalid credentials' });
         }
