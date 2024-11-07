@@ -1,9 +1,9 @@
 const taskModel = require('../models/taskModel');
 const moment = require('moment');
 
-// Helper function to find task by ID
-const findTaskById = async (id, res) => {
-    const task = await taskModel.findById(id);
+// Helper function to find task by ID and verify ownership
+const findTaskById = async (id, userId, res) => {
+    const task = await taskModel.findOne({ _id: id, user: userId });
     if (!task) {
         res.status(404).json({
             status: 'Failed',
@@ -17,13 +17,13 @@ const findTaskById = async (id, res) => {
 // Create task
 const createTask = async (req, res) => {
     try {
-        const { title, priority, dueDate, user, checklist, state } = req.body;
+        const { title, priority, dueDate, checklist, state } = req.body;
 
         const newTask = new taskModel({
             title,
             priority,
             dueDate,
-            user,
+            user: req.user._id, // Associate task with the logged-in user
             checklist,
             state,
         });
@@ -43,11 +43,10 @@ const createTask = async (req, res) => {
 // Assign task to a user
 const assignTaskToUser = async (req, res) => {
     try {
-        const task = await findTaskById(req.params.id, res);
+        const task = await findTaskById(req.params.id, req.user._id, res);
         if (!task) return;
 
         const { userId } = req.body;
-
         task.user = userId; // Assign new user
         const updatedTask = await task.save();
 
@@ -68,7 +67,7 @@ const assignTaskToUser = async (req, res) => {
 // Get task by ID
 const getTaskById = async (req, res) => {
     try {
-        const task = await findTaskById(req.params.id, res);
+        const task = await findTaskById(req.params.id, req.user._id, res);
         if (task) {
             res.status(200).json(task);
         }
@@ -81,7 +80,7 @@ const getTaskById = async (req, res) => {
     }
 };
 
-// Get all tasks
+// Get all tasks for the authenticated user
 const getAllTasks = async (req, res) => {
     try {
         const tasks = await taskModel.find({ user: req.user._id });
@@ -105,10 +104,12 @@ const getAllTasks = async (req, res) => {
 // Edit task
 const editTask = async (req, res) => {
     try {
-        const updatedTask = req.body;
-        const task = await taskModel.findByIdAndUpdate(req.params.id, updatedTask, {
-            new: true,
-        });
+        const updatedTaskData = req.body;
+        const task = await taskModel.findOneAndUpdate(
+            { _id: req.params.id, user: req.user._id },
+            updatedTaskData,
+            { new: true }
+        );
 
         if (task) {
             res.status(200).json({
@@ -134,7 +135,10 @@ const editTask = async (req, res) => {
 // Delete task
 const deleteTask = async (req, res) => {
     try {
-        const task = await taskModel.findByIdAndDelete(req.params.id);
+        const task = await taskModel.findOneAndDelete({
+            _id: req.params.id,
+            user: req.user._id,
+        });
 
         if (task) {
             res.status(204).send(); // No content for 204 status code
@@ -156,8 +160,8 @@ const deleteTask = async (req, res) => {
 // Update task state
 const updateTaskState = async (req, res) => {
     try {
-        const task = await taskModel.findByIdAndUpdate(
-            req.params.id,
+        const task = await taskModel.findOneAndUpdate(
+            { _id: req.params.id, user: req.user._id },
             { state: req.body.state },
             { new: true }
         );
@@ -182,10 +186,11 @@ const updateTaskState = async (req, res) => {
     }
 };
 
+// Get filtered tasks for the authenticated user
 const getFilteredTasks = async (req, res) => {
     try {
         const { filter } = req.query;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         let startDate, endDate;
 
@@ -209,19 +214,13 @@ const getFilteredTasks = async (req, res) => {
                 });
         }
 
-        console.log('User ID:', userId);
-        console.log('Start Date:', startDate);
-        console.log('End Date:', endDate);
-
         const tasks = await taskModel.find({
             user: userId,
             dueDate: {
-                $gte: moment(startDate).toDate(),
-                $lte: moment(endDate).toDate(),
+                $gte: startDate,
+                $lte: endDate,
             },
         });
-
-        console.log('Tasks Found:', tasks);
 
         if (tasks.length === 0) {
             return res.status(404).json({
@@ -232,7 +231,6 @@ const getFilteredTasks = async (req, res) => {
 
         res.status(200).json(tasks);
     } catch (error) {
-        console.error('Error fetching tasks:', error);
         res.status(500).json({
             status: 'Failed',
             message: 'Something went wrong!',
@@ -247,7 +245,7 @@ const updateChecklistItem = async (req, res) => {
         const { taskId, checklistId } = req.params;
         const { ischeck } = req.body;
 
-        const task = await findTaskById(taskId, res);
+        const task = await findTaskById(taskId, req.user._id, res);
         if (!task) return;
 
         const checklistIndex = task.checklist.findIndex(
